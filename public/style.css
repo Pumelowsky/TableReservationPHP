@@ -1,0 +1,56 @@
+.hero-section {
+  height: 90vh;
+  color: white;
+  text-shadow: 1px 1px 2px #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+.contact {
+  height: 84.3vh;
+}
+.bg-resteurant {
+  background: url("/images/background.webp") no-repeat center center;
+  background-size: cover;
+}
+.btn-light-2 {
+  background-color: #111;
+  color: #fff;
+}
+.login-section {
+  height: 84.3vh;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+header,
+.container-fluid {
+  margin: 0;
+  padding: 0;
+}
+.container-fluid {
+  margin-top: 0;
+}
+
+.footer {
+  background-color: #212529;
+}
+
+.footer p {
+  margin: 0;
+}
+.color-hero {
+  color: #ff00ff;
+}
+.color-hero-btn {
+  background: #ff00ff;
+}
+
+.color-hero-btn:hover {
+  background: #cc00cc;
+}
