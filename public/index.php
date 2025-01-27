@@ -1,4 +1,7 @@
 <?php
+
+//W tym pliku zawarty jest Routing projektu
+
 session_start();
 
 

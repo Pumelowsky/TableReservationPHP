@@ -1,6 +1,7 @@
 <?php
 class StatystykiController
 {
+    //Funkcja do pobrania statystyk i ustawienia ich w formacie dla Chart.js
     public function getStatistics()
     {
         global $pdo;

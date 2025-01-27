@@ -4,10 +4,12 @@ use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 require '../vendor/autoload.php';
+
 class EmailController
 {
     private $mailer;
 
+    //Kontruktor
     public function __construct()
     {
         $config = require '../config/smtp.php';
@@ -17,15 +19,17 @@ class EmailController
         $this->mailer->SMTPAuth = true;
         $this->mailer->Username = $config['username'];
         $this->mailer->Password = $config['password'];
-        $this->mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $this->mailer->SMTPSecure = 'ssl';
         $this->mailer->Port = $config['port'];
         $this->mailer->setFrom($config['from_email'], $config['from_name']);
     }
 
+    //Funkcja do wysyłania maila
     public function send_email($to, $subject, $message)
     {
         try {
             $this->mailer->addAddress($to);
+            $this->mailer->CharSet = "UTF-8";
             $this->mailer->isHTML(true);
             $this->mailer->Subject = $subject;
             $this->mailer->Body = $message;
@@ -35,4 +39,5 @@ class EmailController
             echo "Błąd podczas wysyłania wiadomości: {$this->mailer->ErrorInfo}";
         }
     }
+
 }

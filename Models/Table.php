@@ -1,6 +1,7 @@
 <?php
 class Table
 {
+    //Pobieranie dostępnych stolików z bazy
     public static function getAvailableTables($pdo, $reservation_date)
     {
         $query = "

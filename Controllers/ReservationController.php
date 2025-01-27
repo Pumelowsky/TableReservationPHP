@@ -6,13 +6,15 @@ require_once '../config/db.php';
 
 class ReservationController
 {
+    //Wyświetlanie formularza rezerwacji i historii rezerwacji użytkownika
     public function showReservationForm()
     {
         global $pdo;
 
         $reservation_date = $_POST['reservation_date'] ?? date('Y-m-d');
-        $availableTables = Table::getAvailableTables($pdo, $reservation_date);
+        $availableTables = Table::getAvailableTables($pdo, $reservation_date); // Dostępne stoły w danym terminie
 
+        //Pobieranie rezerwacji użytkownika
         if (isset($_SESSION['user_id'])) {
             $user_id = $_SESSION['user_id'];
             $userReservations = Reservation::getUserReservations($pdo, $user_id);
@@ -23,7 +25,8 @@ class ReservationController
         include '../views/rezerwacja.php';
     }
 
-
+    //API: /available-tables
+    //Zwraca w formie JSON dane stolików które są dostępne w danym terminie
     public function getAvailableTables()
     {
         global $pdo;
@@ -40,6 +43,7 @@ class ReservationController
         exit;
     }
 
+    //Tworzenie rezerwacji
     public function createReservation()
     {
         global $pdo;
@@ -62,22 +66,24 @@ class ReservationController
             $stmt->execute();
             $existingReservation = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($existingReservation) {
+            if ($existingReservation) { //Sprawdzanie czy stolik nie jest już zarezerwowany
                 echo "Stolik jest już zarezerwowany!";
             } else {
-                if ($reservation_date < $now)
+                if ($reservation_date < $now) // Czy data nie jest z przeszłości
                 {
                     $_SESSION['error_message'] = "Rezerwacja nie może być wcześniej niż dzisiaj!";
                     header('Location: /rezerwuj');
                     return;
                 }
                 $result = Reservation::createReservation($pdo, $table_id, $user_id, $guests, $reservation_date);
-                $emailController = new EmailController();
-                $emailController->send_email($user_email, 'Rezerwacja stolika', 
-                "<h3>Dziękujemy za rezerwacje.</h3>
-                <p>Potwierdzamy twoją rejestrację na $reservation_date dla $guests gości!</p>"
-                );
+            
+
                 if ($result) {
+                    //Wysyłanie maila
+                    $emailController = new EmailController();
+                    $emailController->send_email($user_email, 'Rezerwacja stolika', 
+                    "<h3>Dziękujemy za rezerwacje.</h3><p>Potwierdzamy twoją rejestrację na $reservation_date dla $guests gości!</p>"
+                    );
                     $_SESSION['success_message'] = "Rezerwacja została pomyślnie złożona na $reservation_date dla $guests gości!";
                     header('Location: /rezerwuj');
                 } else {
@@ -86,6 +92,9 @@ class ReservationController
             }
         }
     }
+    //API: /cancel-reservation
+    //Odwołuje rezerwacje tj. zmienia w bazie kolumne cancelled na 1
+    //Zwraca JSON ze statusem czy się udało
     public function cancelReservation()
     {
         global $pdo;
@@ -112,6 +121,10 @@ class ReservationController
             echo json_encode(['success' => false, 'message' => 'Błąd bazy danych: ' . $e->getMessage()]);
         }
     }
+
+    //API: /restore-reservation
+    //Przywraca rezerwacje tj. zmienia w bazie kolumne cancelled na 0
+    //Zwraca JSON ze statusem czy się udało
     public function restoreReservation()
     {
         global $pdo;

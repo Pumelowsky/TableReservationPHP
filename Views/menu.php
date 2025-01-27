@@ -16,20 +16,21 @@
                 echo htmlspecialchars($item["name"]) . '</h5>
                                 <p class="card-text">' . htmlspecialchars($item["description"]) . '</p>
                                 <p class="card-text fw-bold">Cena: ' . number_format($item["price"], 2) . ' PLN</p>';
-                if (!$isFavorite) {
-                    echo '<form method="POST" action="">
-                            <input type="hidden" name="action" value="add">
-                            <input type="hidden" name="menu_id" value="' . htmlspecialchars($item['id']) . '">
-                            <button type="submit" class="btn btn-primary">Dodaj do ulubionych</button>
-                          </form>';
-                } else {
-                    echo '<form method="POST" action="">
-                            <input type="hidden" name="action" value="remove">
-                            <input type="hidden" name="menu_id" value="' . htmlspecialchars($item['id']) . '">
-                            <button type="submit" class="btn btn-danger">Usuń z ulubionych</button>
-                          </form>';
+                if($_SESSION['user_id']) {
+                    if (!$isFavorite) {
+                        echo '<form method="POST" action="">
+                                <input type="hidden" name="action" value="add">
+                                <input type="hidden" name="menu_id" value="' . htmlspecialchars($item['id']) . '">
+                                <button type="submit" class="btn btn-primary">Dodaj do ulubionych</button>
+                            </form>';
+                    } else {
+                        echo '<form method="POST" action="">
+                                <input type="hidden" name="action" value="remove">
+                                <input type="hidden" name="menu_id" value="' . htmlspecialchars($item['id']) . '">
+                                <button type="submit" class="btn btn-danger">Usuń z ulubionych</button>
+                            </form>';
+                    }
                 }
-
                 echo '</div>
                     </div>
                 </div>';

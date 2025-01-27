@@ -3,6 +3,8 @@
 
 class User
 {
+    //Sprawdzenie czy dany użytkownik istnieje już w bazie
+    //Do walidacji rejestracji
     public static function checkIfUserExists($pdo, $username, $email)
     {
         $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :username OR email = :email");
@@ -12,6 +14,7 @@ class User
         return $stmt->rowCount() > 0;
     }
 
+    //Obsługa do bazy rejestracji użytkowników
     public static function register($pdo, $username, $email, $password)
     {
         $stmt = $pdo->prepare("INSERT INTO users (username, email, password) VALUES (:username, :email, :password)");
@@ -21,6 +24,7 @@ class User
         return $stmt->execute();
     }
 
+    //Obsługa do bazy logowania użytkowników
     public static function login($pdo, $username, $password)
     {
         $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :username");

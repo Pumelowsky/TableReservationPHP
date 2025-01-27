@@ -1,6 +1,8 @@
 <?php
 class Statystyki
 {
+    //Nie użyte w kodzie zostało zastąpione
+    //przez obsługę w StatystykiController
     public static function getReservationStatistics($pdo)
     {
         $query = "

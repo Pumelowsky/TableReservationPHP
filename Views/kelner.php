@@ -1,6 +1,6 @@
 <?php include './layout/header.php';
 
-if ($_SESSION['role'] != "kelner") {
+if ($_SESSION['role'] != "kelner") { //Czy jest kelnerem
     echo "Musisz być kelnerem!";
     exit;
 }

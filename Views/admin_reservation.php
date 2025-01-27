@@ -1,6 +1,6 @@
 <?php
 include './layout/header.php';
-if ($_SESSION['role'] != "admin") {
+if ($_SESSION['role'] != "admin") { //Czy jest administratorem
     echo "Musisz być administratorem!";
     exit;
 }

@@ -4,6 +4,7 @@ require_once '../models/User.php';
 
 class AuthController
 {
+    //Funkcja rejestracji
     public function register()
     {
         global $pdo;
@@ -31,6 +32,7 @@ class AuthController
         }
     }
 
+    //Funkcja logowania
     public function login()
     {
         global $pdo;
@@ -53,6 +55,7 @@ class AuthController
             }
         }
     }
+    //Funkcja wylogowania
     public function logout()
     {
         session_start();

@@ -4,6 +4,7 @@ require_once '../config/db.php';
 
 class KelnerController
 {
+    //Wyświetlanie widoku panelu kelnera z filtrami
     public function showKelnerPanel()
     {
         global $pdo;
@@ -18,6 +19,7 @@ class KelnerController
         include '../views/kelner.php';
     }
 
+    //Odwoływanie rezerwachu
     public function cancelReservation()
     {
         global $pdo;

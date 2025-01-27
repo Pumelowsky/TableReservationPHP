@@ -1,7 +1,7 @@
 <?php
 include '../public/layout/header.php';
 //session_start();
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user_id'])) { //Czy jest zalogowany
     echo "<div class='alert alert-danger' role='alert'>Musisz być zalogowany, aby zarezerwować stolik!</div>";
 } else {
 ?>

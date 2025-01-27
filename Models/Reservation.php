@@ -8,6 +8,7 @@ class Reservation
     private $reservation_date;
     private $is_cancelled;
 
+    //Konstruktor
     public function __construct($table_id, $user_id, $guests, $reservation_date, $is_cancelled)
     {
         $this->table_id = $table_id;
@@ -17,6 +18,7 @@ class Reservation
         $this->is_cancelled = $is_cancelled;
     }
 
+    //Obsługa do bazy tworzenia rezerwacji
     public static function createReservation($pdo, $table_id, $user_id, $guests, $reservation_date)
     {
         $query = "INSERT INTO reservations (table_id, user_id, guests, reservation_date) 
@@ -28,6 +30,7 @@ class Reservation
         $stmt->bindParam(':reservation_date', $reservation_date);
         return $stmt->execute();
     }
+    //Obsługa do bazy odwoływania rezerwacji
     public static function cancelReservation($pdo, $reservation_id)
     {
         $query = "UPDATE reservations SET cancelled = TRUE WHERE id = :reservation_id";
@@ -35,14 +38,14 @@ class Reservation
         $stmt->bindParam(':reservation_id', $reservation_id);
         return $stmt->execute();
     }
+    //Pobieranie wszystkich rezerwacji z bazy z filtrami
     public static function getReservationsWithFilters($pdo, $filters)
     {
         $query = "SELECT r.id, r.table_id, r.user_id, r.guests, r.reservation_date, r.cancelled, 
                          t.table_number, u.username
                   FROM reservations r
                   JOIN tables t ON r.table_id = t.id
-                  JOIN users u ON r.user_id = u.id
-                  WHERE 1=1";
+                  JOIN users u ON r.user_id = u.id";
 
         if (!empty($filters['status'])) {
             if ($filters['status'] == 'active') {
@@ -62,7 +65,6 @@ class Reservation
 
         $stmt = $pdo->prepare($query);
 
-        // Przypisywanie wartości do filtrów
         if (!empty($filters['date_from'])) {
             $stmt->bindParam(':date_from', $filters['date_from']);
         }
@@ -74,6 +76,7 @@ class Reservation
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    //Pobieranie rezerwacji z bazy dla danego użytkownika (po user_id)
     public static function getUserReservations($pdo, $user_id)
     {
         $query = "SELECT r.id, r.table_id, r.reservation_date, r.guests, t.table_number, r.cancelled
