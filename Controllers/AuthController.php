@@ -13,14 +13,12 @@ class AuthController
             $email = $_POST['email'];
             $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-            // Sprawdzamy, czy użytkownik już istnieje
             if (User::checkIfUserExists($pdo, $username, $email)) {
                 $_SESSION['status_message'] = "Użytkownik o tej nazwie lub emailu już istnieje!";
                 header('Location: /register');
                 exit();
             }
 
-            // Rejestrujemy użytkownika
             $result = User::register($pdo, $username, $email, $password);
 
             if ($result) {
@@ -46,6 +44,7 @@ class AuthController
             if ($user) {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['username'];
+                $_SESSION['email'] = $user['email'];
                 $_SESSION['role'] = $user['role'];
                 header('Location: /');
             } else {

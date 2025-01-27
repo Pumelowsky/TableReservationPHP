@@ -1,5 +1,6 @@
 <?php
 require_once '../models/Reservation.php';
+require_once '../Controllers/EmailController.php';
 require_once '../models/Table.php';
 require_once '../config/db.php';
 
@@ -31,9 +32,9 @@ class ReservationController
 
 
         $availableTables = Table::getAvailableTables($pdo, $reservation_date);
-        $availableTables = array_filter($availableTables, function ($table) {
-            return $table['cancelled'] == FALSE;
-        });
+        //$availableTables = array_filter($availableTables, function ($table) {
+          //  return $table['cancelled'] == FALSE;
+        //});
         header('Content-Type: application/json');
         echo json_encode($availableTables);
         exit;
@@ -52,6 +53,7 @@ class ReservationController
             $guests = $_POST['guests'];
             $reservation_date = $_POST['reservation_date'];
             $user_id = $_SESSION['user_id'];
+            $user_email = $_SESSION['email'];
             $query = "SELECT * FROM reservations WHERE table_id = :table_id AND reservation_date = :reservation_date AND cancelled = FALSE";
             $stmt = $pdo->prepare($query);
             $stmt->bindParam(':table_id', $table_id);
@@ -63,7 +65,8 @@ class ReservationController
                 echo "Stolik jest już zarezerwowany!";
             } else {
                 $result = Reservation::createReservation($pdo, $table_id, $user_id, $guests, $reservation_date);
-
+                $emailController = new EmailController();
+                $emailController->send_email('recipient@example.com', 'Test Subject', '<p>To jest testowa wiadomość e-mail.</p>');
                 if ($result) {
                     $_SESSION['success_message'] = "Rezerwacja została pomyślnie złożona na $reservation_date dla $guests gości!";
                     header('Location: /rezerwuj');

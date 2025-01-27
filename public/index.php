@@ -7,12 +7,13 @@ require_once '../controllers/AuthController.php';
 require_once '../controllers/ReservationController.php';
 require_once '../controllers/KelnerController.php';
 require_once '../controllers/AdminController.php';
+require_once '../controllers/MenuController.php';
 
 $authController = new AuthController();
 $reservationController = new ReservationController();
 $kelnerController = new KelnerController();
 $adminController = new AdminController();
-
+$menuController = new MenuController();
 $uri = $_SERVER['REQUEST_URI'];
 $method = $_SERVER['REQUEST_METHOD'];
 $uri = str_replace('/public', '', $uri);
@@ -30,7 +31,9 @@ if ($uri == '/loginSubmit' && $method == 'POST') {
 } elseif ($uri == '/kontakt' && $method == 'GET') {
     include '../views/contact.php';
 } elseif ($uri == '/menu' && $method == 'GET') {
-    include '../controllers/MenuController.php';
+    $menuController->showMenu();
+} elseif ($uri == '/menu' && $method == 'POST') {
+    $menuController->actionMenu();
 } elseif ($uri == '/rezerwuj' && $method == 'GET') {
     $reservationController->showReservationForm();
 } elseif (strpos($uri, '/available-tables') !== false && $method == 'GET') {

@@ -54,3 +54,15 @@ header,
 .color-hero-btn:hover {
   background: #cc00cc;
 }
+
+.favorite {
+    border: 2px solid #ffc107; /* Złoty kolor dla ramki */
+    background-color: #fff8e1; /* Jasny kolor tła */
+}
+.favorite .card-title {
+    display: flex;
+    align-items: center;
+}
+.favorite .bi-star-fill {
+    font-size: 1.2rem;
+}
