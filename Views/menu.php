@@ -3,7 +3,6 @@
     <div class="row g-4">
         <?php
         if (!empty($menuItems)) {
-            print_r($menuItems);
             foreach ($menuItems as $item) {
                 $isFavorite = !empty($item['is_favorite']) && $item['is_favorite'];
 
@@ -17,8 +16,6 @@
                 echo htmlspecialchars($item["name"]) . '</h5>
                                 <p class="card-text">' . htmlspecialchars($item["description"]) . '</p>
                                 <p class="card-text fw-bold">Cena: ' . number_format($item["price"], 2) . ' PLN</p>';
-
-                // Formularz dla dodawania do ulubionych
                 if (!$isFavorite) {
                     echo '<form method="POST" action="">
                             <input type="hidden" name="action" value="add">
@@ -26,7 +23,6 @@
                             <button type="submit" class="btn btn-primary">Dodaj do ulubionych</button>
                           </form>';
                 } else {
-                    // Formularz dla usuwania z ulubionych
                     echo '<form method="POST" action="">
                             <input type="hidden" name="action" value="remove">
                             <input type="hidden" name="menu_id" value="' . htmlspecialchars($item['id']) . '">
@@ -34,9 +30,9 @@
                           </form>';
                 }
 
-                echo '        </div>
-                        </div>
-                    </div>';
+                echo '</div>
+                    </div>
+                </div>';
             }
         } else {
             echo '<p class="text-center">Brak pozycji w menu.</p>';

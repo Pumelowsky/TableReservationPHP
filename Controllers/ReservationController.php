@@ -32,9 +32,9 @@ class ReservationController
 
 
         $availableTables = Table::getAvailableTables($pdo, $reservation_date);
-        //$availableTables = array_filter($availableTables, function ($table) {
-          //  return $table['cancelled'] == FALSE;
-        //});
+        $availableTables = array_filter($availableTables, function ($table) {
+            return $table['cancelled'] == FALSE;
+        });
         header('Content-Type: application/json');
         echo json_encode($availableTables);
         exit;
@@ -54,6 +54,7 @@ class ReservationController
             $reservation_date = $_POST['reservation_date'];
             $user_id = $_SESSION['user_id'];
             $user_email = $_SESSION['email'];
+            $now = date('Y-m-d');
             $query = "SELECT * FROM reservations WHERE table_id = :table_id AND reservation_date = :reservation_date AND cancelled = FALSE";
             $stmt = $pdo->prepare($query);
             $stmt->bindParam(':table_id', $table_id);
@@ -64,9 +65,18 @@ class ReservationController
             if ($existingReservation) {
                 echo "Stolik jest już zarezerwowany!";
             } else {
+                if ($reservation_date < $now)
+                {
+                    $_SESSION['error_message'] = "Rezerwacja nie może być wcześniej niż dzisiaj!";
+                    header('Location: /rezerwuj');
+                    return;
+                }
                 $result = Reservation::createReservation($pdo, $table_id, $user_id, $guests, $reservation_date);
                 $emailController = new EmailController();
-                $emailController->send_email('recipient@example.com', 'Test Subject', '<p>To jest testowa wiadomość e-mail.</p>');
+                $emailController->send_email($user_email, 'Rezerwacja stolika', 
+                "<h3>Dziękujemy za rezerwacje.</h3>
+                <p>Potwierdzamy twoją rejestrację na $reservation_date dla $guests gości!</p>"
+                );
                 if ($result) {
                     $_SESSION['success_message'] = "Rezerwacja została pomyślnie złożona na $reservation_date dla $guests gości!";
                     header('Location: /rezerwuj');

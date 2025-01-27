@@ -16,8 +16,18 @@ class Menu
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public static function isAlreadyFavorite($pdo, $user, $menuItem)
+    {
+        $query = "SELECT user_id, menu_id FROM favorite WHERE user_id = :user_id AND menu_id = :menu_id";
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':user_id', $user);
+        $stmt->bindParam(':menu_id', $menuItem);
+        $stmt->execute();
+        return $stmt->rowCount() > 0;
+    }
     public static function addItemToFavorite($pdo, $user, $menuItem)
     {
+        if(Menu::isAlreadyFavorite($pdo, $user, $menuItem)) return;
         $query = "INSERT INTO favorite (user_id, menu_id) VALUES (:user_id, :menu_id)";
         $stmt = $pdo->prepare($query);
         $stmt->bindParam(':user_id', $user);

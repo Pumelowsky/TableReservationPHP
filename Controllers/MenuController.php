@@ -19,6 +19,7 @@ class MenuController
         foreach ($menuItems as &$item) {
             $item['is_favorite'] = in_array($item['id'], $favoriteIds);
         }
+        unset($item);
         include './layout/header.php';
         include '../views/menu.php';
         include './layout/footer.php';
@@ -33,8 +34,10 @@ class MenuController
 
             if ($action === 'add') {
                 Menu::addItemToFavorite($pdo, $userId, $menuId);
+                header('Location: /menu');
             } elseif ($action === 'remove') {
                 Menu::removeItemFromFavorite($pdo, $userId, $menuId);
+                header('Location: /menu');
             }
         }
     }

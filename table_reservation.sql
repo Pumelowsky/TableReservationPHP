@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 24, 2025 at 03:49 PM
+-- Generation Time: Jan 27, 2025 at 12:48 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -20,6 +20,27 @@ SET time_zone = "+00:00";
 --
 -- Database: `table_reservation`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `favorite`
+--
+
+CREATE TABLE `favorite` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `menu_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `favorite`
+--
+
+INSERT INTO `favorite` (`id`, `user_id`, `menu_id`) VALUES
+(8, 1, 2),
+(9, 3, 1),
+(12, 2, 2);
 
 -- --------------------------------------------------------
 
@@ -41,7 +62,8 @@ CREATE TABLE `menu` (
 INSERT INTO `menu` (`id`, `name`, `description`, `price`) VALUES
 (1, 'Pizza Margherita', 'Delikatna pizza z mozzarellą, pomidorami i bazylią', 25.00),
 (2, 'Sałatka Cezar', 'Sałata, kurczak, parmezan, grzanki, sos cezar', 19.99),
-(3, 'Spaghetti Bolognese', 'Makaron z sosem mięsnym, pomidorowym i przyprawami', 29.99);
+(3, 'Spaghetti Bolognese', 'Makaron z sosem mięsnym, pomidorowym i przyprawami', 29.99),
+(5, 'Tagliatelle z kurczakiem', 'Tagliatelle to rodzaj włoskiego makaronu, który doskonale komponuje się z różnorodnymi treściwymi sosami. Jednym z takich połączeń jest sos na bazie śmietany i sera z delikatnym, ziołowym kurczakiem.', 35.99);
 
 -- --------------------------------------------------------
 
@@ -63,13 +85,18 @@ CREATE TABLE `reservations` (
 --
 
 INSERT INTO `reservations` (`id`, `user_id`, `table_id`, `reservation_date`, `guests`, `cancelled`) VALUES
-(17, 1, 2, '2025-01-21 00:00:00', 2, 0),
-(18, 2, 1, '2025-01-10 00:00:00', 4, 1),
-(19, 2, 1, '2025-01-10 00:00:00', 3, 0),
-(20, 1, 1, '2025-01-23 00:00:00', 4, 1),
+(17, 1, 2, '2025-01-21 00:00:00', 2, 1),
+(18, 2, 1, '2025-01-10 00:00:00', 4, 0),
+(19, 2, 1, '2025-01-10 00:00:00', 3, 1),
+(20, 1, 1, '2025-01-23 00:00:00', 4, 0),
 (21, 3, 2, '2025-01-08 00:00:00', 2, 0),
-(22, 3, 1, '2025-01-08 00:00:00', 4, 0),
-(23, 3, 1, '2025-01-30 00:00:00', 3, 1);
+(31, 3, 1, '2025-01-28 00:00:00', 3, 1),
+(32, 3, 2, '2025-01-30 00:00:00', 2, 0),
+(33, 3, 2, '2025-01-28 00:00:00', 2, 0),
+(34, 3, 1, '2025-01-17 00:00:00', 3, 1),
+(35, 3, 2, '2025-01-29 00:00:00', 2, 0),
+(36, 3, 1, '2025-01-14 00:00:00', 3, 1),
+(37, 3, 1, '2025-01-29 00:00:00', 3, 1);
 
 -- --------------------------------------------------------
 
@@ -119,6 +146,12 @@ INSERT INTO `users` (`id`, `username`, `email`, `password`, `role`) VALUES
 --
 
 --
+-- Indexes for table `favorite`
+--
+ALTER TABLE `favorite`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `menu`
 --
 ALTER TABLE `menu`
@@ -149,16 +182,22 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `favorite`
+--
+ALTER TABLE `favorite`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
 -- AUTO_INCREMENT for table `menu`
 --
 ALTER TABLE `menu`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `tables`

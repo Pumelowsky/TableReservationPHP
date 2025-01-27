@@ -6,7 +6,7 @@ if (!isset($_SESSION['user_id'])) {
 } else {
 ?>
 
-    <div class="container py-5">
+    <div class="container py-5 mb-5">
         <h2 class="text-center mb-4">Formularz Rezerwacji</h2>
         <form id="reservation_form" action="/rezerwuj" method="POST">
             <div id="alert-container"></div>
@@ -16,6 +16,13 @@ if (!isset($_SESSION['user_id'])) {
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 <?php unset($_SESSION['success_message']); ?>
+            <?php endif; ?>
+            <?php if (isset($_SESSION['error_message'])): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?php echo $_SESSION['error_message']; ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php unset($_SESSION['error_message']); ?>
             <?php endif; ?>
 
             <div class="form-group">
@@ -61,13 +68,13 @@ if (!isset($_SESSION['user_id'])) {
                     <?php foreach ($userReservations as $reservation): ?>
                         <tr>
                             <td><?php echo $reservation['table_number']; ?></td>
-                            <td><?php echo date('Y-m-d H:i', strtotime($reservation['reservation_date'])); ?></td>
+                            <td><?php echo date('Y-m-d', strtotime($reservation['reservation_date'])); ?></td>
                             <td><?php echo $reservation['guests']; ?></td>
                             <td>
                                 <?php
                                 if ($reservation['cancelled']) {
                                     echo '<span class="badge bg-danger">Odwołana</span>';
-                                } elseif ($reservation['reservation_date'] >= date('Y-m-d H:i')) {
+                                } elseif ($reservation['reservation_date'] >= date('Y-m-d')) {
                                     echo '<span class="badge bg-primary">Oczekuje</span>';
                                 } else {
                                     echo '<span class="badge bg-success">Zrealizowana</span>';
@@ -76,8 +83,7 @@ if (!isset($_SESSION['user_id'])) {
                             </td>
                             <td>
                                 <?php if (!$reservation['cancelled']): ?>
-                                    <button class="btn btn-danger btn-sm cancel-reservation"
-                                        data-reservation-id="<?php echo $reservation['id']; ?>">
+                                    <button class="btn btn-danger btn-sm cancel-reservation" data-reservation-id="<?php echo $reservation['id']; ?>" data-bs-toggle="modal" data-bs-target="#cancelModal">
                                         Odwołaj
                                     </button>
                                 <?php else: ?>
@@ -92,41 +98,64 @@ if (!isset($_SESSION['user_id'])) {
             <p>Nie masz żadnych rezerwacji.</p>
         <?php endif; ?>
     </div>
+    <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancelModalLabel">Czy na pewno?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Czy na pewno chcesz odwołać tę rezerwację?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                    <button type="button" class="btn btn-danger" id="confirm-cancel">Tak, odwołaj</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
+        let reservationIdToCancel = null;
+
         document.addEventListener("click", function(e) {
             if (e.target && e.target.classList.contains("cancel-reservation")) {
-                const reservationId = e.target.dataset.reservationId;
-
-                if (!reservationId) {
-                    console.error("Brak ID rezerwacji!");
-                    alert("Nie można anulować rezerwacji: Brak ID.");
-                    return;
-                }
-                if (confirm('Czy na pewno chcesz anulować tę rezerwację?')) {
-                    fetch(`/cancel-reservation`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                reservation_id: reservationId
-                            })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                alert("Rezerwacja została anulowana!");
-                                location.reload();
-                            } else {
-                                alert("Błąd anulowania rezerwacji: " + data.message);
-                            }
-                        })
-                        .catch(error => {
-                            console.error("Błąd w żądaniu AJAX:", error);
-                        });
-                }
+                reservationIdToCancel = e.target.dataset.reservationId;
             }
+        });
+
+        document.getElementById("confirm-cancel").addEventListener("click", function() {
+            if (!reservationIdToCancel) {
+                console.error("Brak ID rezerwacji!");
+                alert("Nie można anulować rezerwacji: Brak ID.");
+                return;
+            }
+
+            fetch(`/cancel-reservation`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        reservation_id: reservationIdToCancel
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Rezerwacja została anulowana!");
+                        location.reload();
+                    } else {
+                        alert("Błąd anulowania rezerwacji: " + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Błąd w żądaniu AJAX:", error);
+                });
+
+            var cancelModal = bootstrap.Modal.getInstance(document.getElementById('cancelModal'));
+            cancelModal.hide();
         });
 
         function fetchAvailableTables() {
@@ -169,7 +198,7 @@ if (!isset($_SESSION['user_id'])) {
                         }
                         document.getElementById("tables_data").value = JSON.stringify(tables);
                     } catch (e) {
-                        console.error("Błąd parsowania JSON:", e);
+                        console.error("Błąd JSON:", e);
                     }
                 } else {
                     console.error("Błąd podczas pobierania stolików:", xhr.statusText);
@@ -177,7 +206,7 @@ if (!isset($_SESSION['user_id'])) {
             };
 
             xhr.onerror = function() {
-                console.error("Błąd zapytania AJAX.");
+                console.error("Błąd zapytania.");
             };
 
             xhr.send();
